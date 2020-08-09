@@ -9,12 +9,12 @@ struct record {
   uint32_t link_id;
   uint16_t road_name_size_plus_4;
   struct {
-    __unused uint32_t reserved: 24;
+    uint32_t reserved: 24;
     uint8_t class_number: 4;
     uint8_t branch: 3;
     uint8_t has_road_name: 1;
   };
-  __unused uint32_t unknown;
+  uint32_t unknown;
   char road_name[1];
 };
 #pragma pack()
