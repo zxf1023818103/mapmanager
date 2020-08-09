@@ -74,7 +74,7 @@ void record_array_quick_sort_internal(struct record **begin, struct record **end
   }
   struct record *t = *pivot;
   *pivot = *i;
-  *i = *j;
+  *i = t;
 
   record_array_quick_sort_internal(begin, i, cmp);
   record_array_quick_sort_internal(i, end, cmp);
