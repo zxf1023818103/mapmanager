@@ -10,7 +10,7 @@
 #include "map.h"
 
 static off_t file_size;
-static uint8_t *input_begin, *input_current, *output_begin, *output_current;
+static uint8_t *input_begin, *input_current;
 static int input_fd, output_fd;
 static iconv_t iconv_handle;
 
@@ -53,8 +53,6 @@ void rewind_input_file() {
 }
 
 void close_output_file() {
-  munmap(output_begin, file_size);
-  output_begin = output_current = NULL;
   close(output_fd);
   output_fd = 0;
 }
@@ -65,20 +63,11 @@ void open_output_file(const char *filename) {
     perror(filename);
     _exit(-1);
   }
-  if (ftruncate(output_fd, file_size)) {
-    perror("ftruncate");
-    _exit(-1);
-  }
-  output_begin = output_current = mmap(NULL, (size_t) file_size, PROT_READ | PROT_WRITE, MAP_SHARED, output_fd, 0);
-  if (output_begin == MAP_FAILED) {
-    perror("mmap");
-    _exit(-1);
-  }
 }
 
 void append_record(struct record *record) {
-  memcpy(output_current, record, ntohs(record->record_size));
-  output_current += ntohs(record->record_size);
+  size_t record_size = ntohs(record->record_size);
+  write(output_fd, record, record_size);
 }
 
 void print_record(struct record *record) {
